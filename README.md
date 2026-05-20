@@ -156,9 +156,22 @@ Content-Type: application/json
     "id": 1,
     "username": "testuser",
     "email": "test@example.com",
+    "role": "admin",
     "created_at": "2024-01-15T10:30:00",
     "updated_at": "2024-01-15T10:30:00"
   }
+}
+```
+
+**JWT Token Payload:**
+The JWT token includes the following claims:
+```json
+{
+  "username": "testuser",
+  "id": 1,
+  "role": "admin",
+  "exp": 1705324200,
+  "iat": 1705320600
 }
 ```
 
@@ -181,6 +194,10 @@ curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username": "testuser", "password": "password123"}'
 ```
+
+### Decode JWT token (optional)
+
+You can decode the JWT token at https://jwt.io to inspect the payload and verify the "role": "admin" field is present.
 
 ### Use the JWT token
 
@@ -262,6 +279,8 @@ For PostgreSQL in production:
 4. **Token Expiration**: Adjust `JWT_ACCESS_TOKEN_EXPIRES` in `config.py` based on your security requirements.
 
 5. **CORS**: Configure CORS properly for your frontend domain in production.
+
+6. **Role-Based Access Control**: The JWT token now includes a "role" field. Implement proper authorization checks in your protected endpoints.
 
 ## Development
 

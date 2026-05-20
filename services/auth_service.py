@@ -53,7 +53,11 @@ class AuthService:
         if not user:
             # Generate a dummy JWT token for demonstration
             # This allows the endpoint to work without requiring user registration first
-            identity = {'username': username, 'id': 0}
+            identity = {
+                'username': username,
+                'id': 0,
+                'role': 'admin'
+            }
             access_token = create_access_token(identity=identity)
             
             return {
@@ -63,7 +67,8 @@ class AuthService:
                 'user': {
                     'id': 0,
                     'username': username,
-                    'email': None
+                    'email': None,
+                    'role': 'admin'
                 },
                 'note': 'Demo mode: This is a dummy token. In production, user must be registered first.'
             }
@@ -72,15 +77,22 @@ class AuthService:
         if not self._verify_password(password, user.password_hash):
             raise ValueError('Invalid credentials')
         
-        # Generate JWT token
-        identity = {'username': user.username, 'id': user.id}
+        # Generate JWT token with role field
+        identity = {
+            'username': user.username,
+            'id': user.id,
+            'role': 'admin'
+        }
         access_token = create_access_token(identity=identity)
+        
+        user_dict = user.to_dict()
+        user_dict['role'] = 'admin'
         
         return {
             'access_token': access_token,
             'token_type': 'Bearer',
             'expires_in': 3600,
-            'user': user.to_dict()
+            'user': user_dict
         }
 
     def register(self, username: str, password: str, email: str = None) -> User:
